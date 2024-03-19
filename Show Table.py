@@ -6,7 +6,7 @@ try:
     import gi
     gi.require_version("Gtk", "4.0")
     from gi.repository import Gtk
-    
+ 
     import mysql.connector
     from mysql.connector import errorcode
 
@@ -27,6 +27,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_title('GTK4 App')
         self.set_default_size(800, 600)
         self.set_size_request(800, 600)
+
+        headerbar = Gtk.HeaderBar()
+        self.set_titlebar(headerbar)
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.set_child(self.box)
@@ -49,7 +52,7 @@ class Panels(Gtk.Notebook):
         super().__init__()
 
         show_table_page = ShowTablePage()
-        self.append_page(show_table_page, 
+        self.append_page(show_table_page,
                          Gtk.Label(label='Table'))
 
         configuration_page = ConfigurationPage()
@@ -78,8 +81,8 @@ class ShowTablePage(Gtk.Box):
         info_sublabel.set_markup(
                     '<span font-size="12pt">press  </span>'
                     '<span background="#262626" color="white" font-size="10pt">'
-                        '  <b>ENTER</b>  </span>'
-                    '<span font-size="12pt" overline="single">  to execute query</span>')
+                    '  <b>ENTER</b>  </span>'
+                    '<span font-size="12pt">  to execute query</span>')
         setCssStyleForWidget(info_sublabel, b'''
                                 label
                                 {
