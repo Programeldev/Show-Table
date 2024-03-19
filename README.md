@@ -1,7 +1,7 @@
 # Show Table
 
-<img src="assets/img1.png" width="600">
-<img src="assets/img2.png" width="600">
+<img src="screenshots/img1.png" width="600">
+<img src="screenshots/img2.png" width="600">
 
 Simple GUI application for view database records.
 
