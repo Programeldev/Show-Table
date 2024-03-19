@@ -1,19 +1,12 @@
 import sys
-import logging
 from collections import deque
 
-try:
-    import gi
-    gi.require_version("Gtk", "4.0")
-    from gi.repository import Gtk
- 
-    import mysql.connector
-    from mysql.connector import errorcode
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
 
-except ImportError as ex:
-    print('Missing dependencies!\n', ex)
-    print('Check my Github for more informations: ')
-    sys.exit(-1)
+import mysql.connector
+from mysql.connector import errorcode
 
 
 _config_entries: dict[str, str] = dict()
@@ -216,7 +209,7 @@ class ConfigurationPage(Gtk.Grid):
                             entries_label['Password'],
                             Gtk.PositionType.BOTTOM,
                             1, 1)
-        
+
         save_button = Gtk.Button(label='   Save   ')
         save_button.set_halign(Gtk.Align.CENTER)
         save_button.set_hexpand(True)
@@ -328,7 +321,7 @@ class Switcher(Gtk.StackSwitcher):
 
         if not mysql_conn.isConnected():
             return False
-        
+
         column_names = mysql_conn.executeQuery(query)
 
         if not column_names:
@@ -401,7 +394,6 @@ class MySQLConnection:
         if not hasattr(self, 'instance'):
             self.instance = super(MySQLConnection, self).__new__(self)
             self.__clearFields(self)
-            
         return self.instance
 
 
@@ -412,7 +404,6 @@ class MySQLConnection:
 
         if kwargs_for_mysql == self.used_kwargs_for_mysql \
            and self.isConnected(): 
-
             return True
 
         self.used_kwargs_for_mysql = kwargs_for_mysql
@@ -429,15 +420,13 @@ class MySQLConnection:
                            ': Connection to MySQL server failed, check'
                            ' your username or password.'))
 
-                return False
-                    
+                return False       
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 appendLog((err.errno, 
                            ': Connection to database failed, no access'
                            ' or database don\'t exist.'))
 
-                return False
-                    
+                return False             
             else:
                 appendLog(f'{err.errno}: {err}')
                 return False
@@ -460,7 +449,6 @@ class MySQLConnection:
            and self.connection.is_connected():
 
             return True
-
         else:
             return False
 
@@ -519,7 +507,6 @@ def appendLog(logs = None):
     if isinstance(logs, dict):
         raise TypeError('Wrong message variable type.'
                         ' Must be other than dictonary.')
-
     elif isinstance(logs, (list, tuple)):
         concat_logs = str()
 
@@ -532,10 +519,8 @@ def appendLog(logs = None):
             concat_logs += log_str
 
         _logs += concat_logs
-
     else:
         log_str = str(logs)
-        
         if log_str[-1] != '\n':
             log_str += '\n'
 

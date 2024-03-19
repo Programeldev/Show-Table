@@ -9,17 +9,24 @@ Simple GUI application for view database records.
 
 1. Download project.
 2. Go to project folder.
-3. Run with python:
+3. Run in bash:
     ```
-    python3.10 Show\ Table.py
+    python -m venv env
     ```
+    ```
+    source env/bin/activate
+    ```
+    ```
+    pip install -r requirements.txt
+    ```
+
+### And start app:
+```
+python ShowTable.py
+```
 
 ## Dependencies
 
-* Python 3.10
-* GTK4
-* via pip:
-    ``` 
-    mysql-connector-python >= 8.0.32
-    PyGObject >= 3.42.2
-    ```
+* Python => 3.10
+* PyGObject => 3.48.1
+* pycario => 1.26.0
