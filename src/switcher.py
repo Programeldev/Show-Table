@@ -5,7 +5,7 @@ from gi.repository import Gtk
 import globals
 from utils import setCssStyleForWidget, popLogs
 from table import Table
-from mysqlconnect import MySQLConnection
+from mysqlconnect import MySQLConnection, NoRecords
 
 
 class Switcher(Gtk.StackSwitcher):
@@ -13,14 +13,16 @@ class Switcher(Gtk.StackSwitcher):
 
     def __init__(self):
         super().__init__()
-
         self.table = Table()
-        setCssStyleForWidget(self.table, b'''
-                                treeview
-                                {
-                                    margin: 0px 20px 30px 20px;
-                                }
-                             ''')
+        setCssStyleForWidget(
+            self.table,
+            b'''
+            treeview
+            {
+                margin: 0px 20px 30px 20px;
+            }
+            '''
+        )
 
         scrollable_window_for_table = Gtk.ScrolledWindow()
         scrollable_window_for_table.set_child(self.table)
@@ -28,28 +30,33 @@ class Switcher(Gtk.StackSwitcher):
         self.tables_frame = Gtk.Frame()
         self.tables_frame.set_vexpand(True)
         self.tables_frame.set_hexpand(True)
-        setCssStyleForWidget(self.tables_frame, b'''
-                                frame
-                                {
-                                    margin: 5px;
-                                }
-                             ''')
+        setCssStyleForWidget(
+            self.tables_frame,
+            b'''
+            frame
+            {
+                margin: 5px;
+            }
+            '''
+        )
 
         self.tables_frame.set_child(scrollable_window_for_table)
-
         self.stack.add_titled(self.tables_frame, None, 'Table')
 
         log_view = Gtk.TextView()
         log_view.set_editable(False)
         log_view.set_cursor_visible(False)
         log_view.set_wrap_mode(Gtk.WrapMode.WORD)
-        setCssStyleForWidget(log_view, b'''
-                                textview
-                                {
-                                    font-size: 12pt;
-                                    margin: 8px;
-                                }
-                             ''')
+        setCssStyleForWidget(
+            log_view,
+            b'''
+            textview
+            {
+                font-size: 12pt;
+                margin: 8px;
+            }
+            '''
+        )
 
         self.log_text_buffer = Gtk.TextBuffer()
         log_view.set_buffer(self.log_text_buffer)
@@ -60,33 +67,33 @@ class Switcher(Gtk.StackSwitcher):
         self.log_view_frame = Gtk.Frame()
         self.log_view_frame.set_vexpand(True)
         self.log_view_frame.set_hexpand(True)
-        setCssStyleForWidget(self.log_view_frame, b'''
-                                frame
-                                {
-                                    margin: 5px;
-                                }
-                             ''')
         self.log_view_frame.set_child(scrollable_window_for_log_view)
+        setCssStyleForWidget(
+            self.log_view_frame,
+            b'''
+            frame
+            {
+                margin: 5px;
+            }
+            '''
+        )
 
         self.stack.add_titled(self.log_view_frame, None, 'Log')
-
         self.set_stack(self.stack)
 
     def fillTable(self, query: str) -> bool:
-        # global _config_entries
-
         if not query:
             return False
 
-        mysql_conn = MySQLConnection()
-        mysql_conn.connect(**globals.config_entries)
-
-        if not mysql_conn.isConnected():
-            return False
-
-        column_names = mysql_conn.executeQuery(query)
-
-        if not column_names:
+        column_names: tuple
+        try:
+            mysql_conn = MySQLConnection()
+            mysql_conn.connect(**globals.config_entries)
+            column_names = mysql_conn.executeQuery(query)
+        except (
+                ConnectionError,
+                NoRecords
+        ):
             return False
 
         list_store = Gtk.ListStore.new([str] * len(column_names))

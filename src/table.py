@@ -11,7 +11,6 @@ class Table(Gtk.TreeView):
 
     def __init__(self):
         super().__init__()
-
         self.props.enable_grid_lines = Gtk.TreeViewGridLines.BOTH
 
     def updateTableData(self, list_store: Gtk.ListStore):
@@ -25,8 +24,9 @@ class Table(Gtk.TreeView):
             self.remove_column(self.columns.popleft())
 
         for i, column_name in enumerate(new_columns):
-            self.columns.append(Gtk.TreeViewColumn(column_name,
-                                text=i,
-                                cell_renderer=self.cells_renderer))
-
+            self.columns.append(Gtk.TreeViewColumn(
+                column_name,
+                text=i,
+                cell_renderer=self.cells_renderer)
+            )
             self.append_column(self.columns[i])

@@ -10,19 +10,19 @@ Simple GUI application for view database records.
 1. Download project.
 2. Go to project folder.
 3. Run in bash:
-    ```
+    ```bash
     python -m venv env
     ```
-    ```
+    ```bash
     source env/bin/activate
     ```
-    ```
+    ```bash
     pip install -r requirements.txt
     ```
 
-### And start app:
-```
-python ShowTable.py
+##### And start app:
+```python
+python ShowTable
 ```
 
 ## Dependencies
