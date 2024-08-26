@@ -14,28 +14,24 @@ def setCssStyleForWidget(widget: Gtk.Widget, str_in_bytes: bytes):
                                Gtk.STYLE_PROVIDER_PRIORITY_FALLBACK)
 
 
-def getLogs() -> str:
-    # global globals.logs
-
+def popLogs() -> str:
     if not globals.logs:
         return ''
 
     ret_logs = globals.logs
-    globals.logs = str()
+    globals.logs = ''
     return ret_logs
 
 
 def appendLog(logs=None):
-    # global globals.logs
-
     if logs is None:
         raise ValueError('Empty log was given.')
 
-    if isinstance(logs, dict):
-        raise TypeError('Wrong message variable type.'
-                        ' Must be other than dictonary.')
+    if not isinstance(logs, (str, list, tuple)):
+        raise TypeError('Wrong log variable type,\n'
+                        ' only str, list or tuple.')
     elif isinstance(logs, (list, tuple)):
-        concat_logs = str()
+        concat_logs = ''
 
         for log in logs:
             log_str = str(log)

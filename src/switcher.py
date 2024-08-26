@@ -3,7 +3,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
 
 import globals
-from utils import setCssStyleForWidget, getLogs
+from utils import setCssStyleForWidget, popLogs
 from table import Table
 from mysqlconnect import MySQLConnection
 
@@ -105,7 +105,7 @@ class Switcher(Gtk.StackSwitcher):
         return True
 
     def updateLogTextBuffer(self):
-        logs = getLogs()
+        logs = popLogs()
 
         if not logs:
             self.stack.set_visible_child(self.tables_frame)
