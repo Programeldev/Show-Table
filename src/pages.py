@@ -84,16 +84,15 @@ class ConfigurationPage(Gtk.Grid):
     def __init__(self):
         super().__init__()
 
-        info_label = Gtk.Label()
-        info_label.set_margin_top(30)
-        info_label.set_markup(
-            '<span font_size="14pt">Click \'Save\' button'
-                ' or press  </span>'
-            '<span background="#262626" color="white" font-size="10pt">'
-                '  <b>ENTER</b>  </span>'
-            '<span font_size="14pt">  to save configuration</span>'
-        )
-        self.attach(info_label, 3, 9, 3, 1)
+        setCssStyleForWidget(
+            self,
+            b'''
+                grid
+                {
+                    margin: 8rem 5rem 0rem 5rem;
+                    border-spacing: 1rem;
+                }
+            ''')
 
         self.entries = {
             'host':     Gtk.Entry(text='localhost'),
@@ -108,18 +107,10 @@ class ConfigurationPage(Gtk.Grid):
 
         for entry in self.entries.values():
             entry.set_hexpand(True)
-            setCssStyleForWidget(
-                entry,
-                b'''
-                entry
-                {
-                    margin-right: 40px;
-                    margin-left: 40px;
-                }
-                '''
-            )
-            entry.connect('activate', self.__saveConfigEntries)
+            entry.set_vexpand(False)
+            entry.connect('unmap', self.__saveConfigEntries)
 
+        # Hide entered password input
         self.entries['password'].set_visibility(False)
 
         entries_label_text = [
@@ -131,81 +122,28 @@ class ConfigurationPage(Gtk.Grid):
 
         for label_text in entries_label_text:
             label = Gtk.Label(label=label_text)
+            label.set_halign(Gtk.Align.END)
+            label.set_valign(Gtk.Align.START)
             setCssStyleForWidget(
                 label,
                 b'''
                 label
                 {
-                    font-size: 16pt;
-                    margin-top: 50px;
+                    font-size: 11pt;
+                    margin-top: 15px;
                 }
                 '''
             )
             entries_label.update({label_text: label})
 
-        self.attach_next_to(
-            entries_label['IP Address'],
-            info_label,
-            Gtk.PositionType.BOTTOM,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            entries_label['Database Name'],
-            entries_label['IP Address'],
-            Gtk.PositionType.RIGHT,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            self.entries['host'],
-            entries_label['IP Address'],
-            Gtk.PositionType.BOTTOM,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            self.entries['database'],
-            entries_label['Database Name'],
-            Gtk.PositionType.BOTTOM,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            entries_label['Username'],
-            self.entries['host'],
-            Gtk.PositionType.BOTTOM,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            entries_label['Password'],
-            entries_label['Username'],
-            Gtk.PositionType.RIGHT,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            self.entries['user'],
-            entries_label['Username'],
-            Gtk.PositionType.BOTTOM,
-            1,
-            1
-        )
-
-        self.attach_next_to(
-            self.entries['password'],
-            entries_label['Password'],
-            Gtk.PositionType.BOTTOM,
-            1,
-            1
-        )
+        self.attach(entries_label['IP Address'], 0, 0, 1, 1)
+        self.attach(self.entries['host'], 1, 0, 2, 1)
+        self.attach(entries_label['Database Name'], 0, 1, 1, 1)
+        self.attach(self.entries['database'], 1, 1, 2, 1)
+        self.attach(entries_label['Username'], 0, 2, 1, 1)
+        self.attach(self.entries['user'], 1, 2, 2, 1)
+        self.attach(entries_label['Password'], 0, 3, 1, 1)
+        self.attach(self.entries['password'], 1, 3, 2, 1)
 
         save_button = Gtk.Button(label='   Save   ')
         save_button.set_halign(Gtk.Align.CENTER)
@@ -219,25 +157,25 @@ class ConfigurationPage(Gtk.Grid):
             }
             '''
         )
-        save_button.connect('clicked', self.__saveConfigEntries)
-        setCssStyleForWidget(
-            save_button,
-            b'''
-            button
-            {
-                font-size: 20pt;
-                border: 50px;
-            }
-            '''
-        )
+        # save_button.connect('clicked', self.__saveConfigEntries)
+        # setCssStyleForWidget(
+        #     save_button,
+        #     b'''
+        #     button
+        #     {
+        #         font-size: 20pt;
+        #         border: 50px;
+        #     }
+        #     '''
+        # )
 
-        self.attach_next_to(
-            save_button,
-            self.entries['user'],
-            Gtk.PositionType.BOTTOM,
-            2,
-            1
-        )
+        # self.attach_next_to(
+        #     save_button,
+        #     self.entries['user'],
+        #     Gtk.PositionType.BOTTOM,
+        #     2,
+        #     1
+        # )
 
         self.set_row_spacing(10)
         self.set_column_spacing(10)
