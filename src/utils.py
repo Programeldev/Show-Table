@@ -48,3 +48,7 @@ def appendLog(logs=None):
             log_str += '\n'
 
         globals.logs += log_str
+
+
+def reveal(revealer, show):
+    revealer.set_reveal_child(show)

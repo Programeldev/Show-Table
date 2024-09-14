@@ -3,7 +3,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
 
 import globals
-from utils import setCssStyleForWidget
+from utils import setCssStyleForWidget, reveal
 from switcher import Switcher
 
 
@@ -14,37 +14,7 @@ class TablePage(Gtk.Box):
     def __init__(self):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
 
-        info_label = Gtk.Label(label='Write below your query')
-        setCssStyleForWidget(
-            info_label,
-            b'''
-            label
-            {
-                font-size: 18pt;
-                margin-top: 20px;
-            }
-            '''
-        )
-        self.append(info_label)
-
-        info_sublabel = Gtk.Label()
-        info_sublabel.set_markup(
-            '<span font-size="12pt">press  </span>'
-            '<span background="#262626" color="white" font-size="10pt">'
-            '  <b>ENTER</b>  </span>'
-            '<span font-size="12pt">  to execute query</span>'
-        )
-        setCssStyleForWidget(
-            info_sublabel,
-            b'''
-            label
-            {
-                margin-top: 8px;
-                margin-bottom: 20px;
-            }
-            '''
-        )
-        self.append(info_sublabel)
+        entry_query_box = Gtk.Box(Gtk.Orientation.HORIZONTAL)
 
         query_entry = Gtk.Entry()
         query_entry.set_max_length(500)
@@ -54,18 +24,28 @@ class TablePage(Gtk.Box):
             b'''
             entry
             {
-                margin: 0px 40px 20px 40px;
+                margin: 3rem 1.5rem 2.5rem 1.5rem;
             }
             '''
         )
-        query_entry.connect('activate', self.enterQuery)
-        self.append(query_entry)
+        query_entry.connect('activate', self.__enterQuery)
+
+        query_revealer = Gtk.Revealer()
+        query_revealer.set_child(query_entry)
+        query_revealer.set_transition_duration(600)
+        query_revealer.set_transition_type(Gtk.RevealerTransitionType.SWING_DOWN)
+        query_revealer.connect('map', reveal, True)
+        query_revealer.connect('unmap', reveal, False)
+
+        entry_query_box.append(query_revealer)
+
+        # search_button = 
 
         self.switcher = Switcher()
         self.append(self.switcher)
         self.append(self.switcher.stack)
 
-    def enterQuery(self, entry):
+    def __enterQuery(self, entry):
         new_query = entry.get_text()
 
         if not new_query:
@@ -123,8 +103,8 @@ class ConfigurationPage(Gtk.Grid):
             revealer.set_child(entry)
             revealer.set_transition_duration(DURATION)
             revealer.set_transition_type(ANIMATION)
-            revealer.connect('unmap', self.__reveal, False)
-            revealer.connect('map', self.__reveal, True)
+            revealer.connect('unmap', reveal, False)
+            revealer.connect('map', reveal, True)
 
         # Hide entered input password
         self.entries[2].set_visibility(False)
@@ -154,8 +134,8 @@ class ConfigurationPage(Gtk.Grid):
             revealer.set_child(label)
             revealer.set_transition_duration(DURATION)
             revealer.set_transition_type(ANIMATION)
-            revealer.connect('unmap', self.__reveal, False)
-            revealer.connect('map', self.__reveal, True)
+            revealer.connect('unmap', reveal, False)
+            revealer.connect('map', reveal, True)
             entries_label.update({label_text: revealer})
 
         self.attach(entries_label['IP Address'], 0, 0, 1, 1)
@@ -176,6 +156,3 @@ class ConfigurationPage(Gtk.Grid):
         for entry, key in zip(self.entries,
                               globals.config_entries_keys):
             globals.config_entries.update({key: entry.get_text()})
-
-    def __reveal(self, revealer, show):
-        revealer.set_reveal_child(show)
