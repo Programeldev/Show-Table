@@ -14,13 +14,11 @@ class TablePage(Gtk.Box):
     def __init__(self):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
 
-        entry_query_box = Gtk.Box(Gtk.Orientation.HORIZONTAL)
-
-        query_entry = Gtk.Entry()
-        query_entry.set_max_length(500)
-        query_entry.set_hexpand(True)
+        self.query_entry = Gtk.Entry()
+        self.query_entry.set_max_length(500)
+        self.query_entry.set_hexpand(True)
         setCssStyleForWidget(
-            query_entry,
+            self.query_entry,
             b'''
             entry
             {
@@ -28,25 +26,45 @@ class TablePage(Gtk.Box):
             }
             '''
         )
-        query_entry.connect('activate', self.__enterQuery)
+        self.query_entry.connect('activate', self.__enterQuery)
 
-        query_revealer = Gtk.Revealer()
-        query_revealer.set_child(query_entry)
-        query_revealer.set_transition_duration(600)
-        query_revealer.set_transition_type(Gtk.RevealerTransitionType.SWING_DOWN)
-        query_revealer.connect('map', reveal, True)
-        query_revealer.connect('unmap', reveal, False)
+        query_entry_revealer = Gtk.Revealer()
+        query_entry_revealer.set_child(self.query_entry)
+        query_entry_revealer.set_transition_duration(600)
+        query_entry_revealer.set_transition_type(Gtk.RevealerTransitionType.SWING_DOWN)
+        query_entry_revealer.connect('map', reveal, True)
+        query_entry_revealer.connect('unmap', reveal, False)
 
-        entry_query_box.append(query_revealer)
+        search_button = Gtk.Button.new_from_icon_name('system-search-symbolic')
+        setCssStyleForWidget(
+            search_button,
+            b'''
+            button
+            {
+                margin: 2.5rem 0.6rem 2.5rem 0rem;
+            }
+            '''
+        )
+        search_button.connect('clicked', self.__enterQuery)
 
-        # search_button = 
+        search_button_revealer = Gtk.Revealer()
+        search_button_revealer.set_child(search_button)
+        search_button_revealer.set_transition_duration(600)
+        search_button_revealer.set_transition_type(Gtk.RevealerTransitionType.SWING_DOWN)
+        search_button_revealer.connect('map', reveal, True)
+        search_button_revealer.connect('unmap', reveal, False)
+
+        horizontal_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        horizontal_box.append(query_entry_revealer)
+        horizontal_box.append(search_button_revealer)
+        self.append(horizontal_box)
 
         self.switcher = Switcher()
         self.append(self.switcher)
         self.append(self.switcher.stack)
 
-    def __enterQuery(self, entry):
-        new_query = entry.get_text()
+    def __enterQuery(self, obj):
+        new_query = self.query_entry.get_text()
 
         if not new_query:
             return
